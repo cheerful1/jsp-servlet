@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/styles2.css">
+    <script src="./js/jquery-3.1.1.min.js"></script>
+    <script src="jsp/script2.js"></script>
+    <title>Add Users</title>
+    <style>
+        .required_input{
+            background-color: khaki;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>用户信息</h1>
+    </div>
+
+<form onsubmit="return validateForm()" id="userForm" novalidate>
+    <table align="center" >
+        <tr>
+            <th><label for="user_id" class="required">用户ID：</label></th>
+            <th><input type="text" id="user_id" required></th>
+            <th><label for="user_name" class="required">用户姓名：</label></th>
+            <th>
+                <input type="text" id="user_name" required></th>
+            </th>
+        </tr>
+        <tr>
+            <th><label for="user_pass" class="required">用户口令：</label></th>
+            <th><input type="password" id="user_pass" required></th>
+            <th><label for="user_repass" class="required">重复口令：</label></th>
+            <th><input type="password" id="user_repass" required></th>
+        </tr>
+        <tr>
+            <th><label for="user_department" class="required">用户部门：</label></th>
+            <th>
+                <select id="user_department"  required>
+                    <option value="">请选择部门</option>
+                    <option value="立案庭">立案庭</option>
+                    <option value="业务庭">业务庭</option>
+                    <option value="办公室">办公室</option>
+                </select>
+            </th>
+            <th><label for="user_gender">用户性别：</label></th>
+            <th>
+                <select  id="user_gender">
+                    <option value="">请选择性别</option>
+                    <option value="男">男</option>
+                    <option value="女">女</option>
+                </select>
+            </th>
+        </tr>
+        <tr>
+            <th><label for="user_birthday">出生日期：</label></th>
+            <th><input type="date" id="user_birthday" placeholder="请输入出生日期"></th>
+            <th><label for="user_pxh">排序号：</label></th>
+            <th><input type="text" id="user_pxh" placeholder="请输入排序号令"></th>
+        </tr>
+        <tr>
+            <th><label for="user_disable">是否禁用：</label></th>
+            <th colspan="1">
+                <input type="checkbox" id="user_disable" value="是">
+            </th>
+            <th></th>
+            <th></th>
+        </tr>
+        <tr>
+            <th colspan="4">
+                <div class="form-row">
+                    <button id="btn-save" >保存</button>
+                    <button id="btn-return">返回</button>
+                </div>
+            </th>
+        </tr>
+    </table>
+</form>
+
+
+
+</div>
+</body>
+
+</html>
+

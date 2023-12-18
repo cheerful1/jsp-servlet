@@ -1,0 +1,119 @@
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #f4f4f4;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.section-a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+/*label必填的字段前面有**/
+label.required::before {
+    content: " *";
+    color: red;
+}
+
+
+
+label {
+    min-width: 120px;
+}
+
+input, select {
+    width: 200px;
+    padding: 8px;
+    box-sizing: border-box;
+}
+
+button {
+    padding: 10px;
+    background-color: #4577a0;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #4577a0;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/*input:required,*/
+/*select:required {*/
+/*    border: 1px solid #ff0000; !* 设置必填项边框为红色 *!*/
+/*}*/
+
+table {
+    font-size:15px;
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.form-row{
+    text-align: center; /* 居中显示按钮 */
+
+}
+.btn-save {
+    text-align: center; /* 居中显示按钮 */
+}
+
+.btn-return {
+    text-align: center; /* 居中显示按钮 */
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+    width: auto;
+}
+
+/* 错误状态下的表单输入框边框样式 */
+.input-error {
+    border: 2px solid red;
+}
+
+/* 错误状态下的表单输入框边框样式 */
+.highlight {
+    border: 2px solid red;
+}
+
+.required-field{
+    background-color: antiquewhite;
+}
+
+/*th:nth-child(1),*/
+/*th:nth-child(2),*/
+/*th:nth-child(3) {*/
+/*    width: calc(25% - 10px); !* 25% width for the first three columns *!*/
+/*}*/
+
+/*th:nth-child(4),*/
+/*td:nth-child(4) {*/
+/*    width: 50%; !* 50% width for the last column *!*/
+/*}*/
