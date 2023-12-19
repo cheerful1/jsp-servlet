@@ -1,10 +1,8 @@
 package com.tdh.usermanagment.service;
 
 import com.tdh.usermanagment.Dao.DepartmentTransform;
-import com.tdh.usermanagment.Dao.GenderTransform;
 import com.tdh.usermanagment.Dao.UserDao;
 import com.tdh.usermanagment.cache.TDepartCache;
-import com.tdh.usermanagment.cache.TGenderCache;
 import com.tdh.usermanagment.entity.TdhUser;
 import com.tdh.usermanagment.entity.vo.MessageModel;
 import com.tdh.usermanagment.utils.DepartGenderTransformUtil;
@@ -27,11 +25,6 @@ public class QueryService {
 
     public MessageModel queryUser(String yhid_xm, String yhbm) {
         MessageModel messageModel = new MessageModel();
-        //1.将前端得到的用户部门转化为用户代码  立案庭——>32010001 这样再去查
-        if (TDepartCache.BMDM_BMMC_MAP.isEmpty()) {
-            DepartmentTransform departmentT = new DepartmentTransform();
-            departmentT.transfromDepartment();
-        }
         // 1.转换部门信息
         String tyhbm = KeyQuery.ValueLookup(yhbm, TDepartCache.BMDM_BMMC_MAP);
         try {

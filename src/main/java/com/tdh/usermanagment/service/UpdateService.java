@@ -30,13 +30,6 @@ public class UpdateService {
     public MessageModel updateUser(TdhUser tdhUser) {
         MessageModel messageModel = new MessageModel();
         try {
-            // 1.先把部门和性别信息写入到缓存中
-            if (TGenderCache.CODE_YHXB_MAP.isEmpty() || TDepartCache.BMDM_BMMC_MAP.isEmpty()) {
-                DepartmentTransform departmentT = new DepartmentTransform();
-                GenderTransform genderT = new GenderTransform();
-                departmentT.transfromDepartment();
-                genderT.getGenderName();
-            }
             // 1.转换部门和性别信息
             String yhbm = KeyQuery.ValueLookup(tdhUser.getYHBM(), TDepartCache.BMDM_BMMC_MAP);
             String yhxb = KeyQuery.ValueLookup(tdhUser.getYHXB(), TGenderCache.CODE_YHXB_MAP);
@@ -70,6 +63,16 @@ public class UpdateService {
                 messageModel.setMsg("更新失败！无法获取当前时间！系统错误！");
                 return messageModel;
             }
+            //4.前端字符串接收到的CSRQ需要从2023-12-15转化为20231215
+            String user_csrq = tdhUser.getCSRQ();
+            // 定义日期格式
+            DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+
+            // 解析字符串为 LocalDate
+            LocalDate date = LocalDate.parse(user_csrq, inputFormatter);
+            String formattedcsrq = date.format(outputFormatter);
+            tdhUser.setCSRQ(formattedcsrq);
 
 
             // 5、上面没有问题之后，最终入库，入库是否成功判断

@@ -27,13 +27,7 @@ public class DepartGenderTransformUtil {
      * @return
      */
     public static List<TdhUser> DGtrans(List<TdhUser> tdhUserList){
-        //先把部门和性别信息写入到缓存中
-        if(TGenderCache.CODE_YHXB_MAP.isEmpty()|| TDepartCache.BMDM_BMMC_MAP.isEmpty()){
-            DepartmentTransform departmentT = new DepartmentTransform();
-            GenderTransform genderT = new GenderTransform();
-            departmentT.transfromDepartment();
-            genderT.getGenderName();
-        }
+
         //将每一个user对象中的部门代码和性别转化一下
         for(TdhUser tUser : tdhUserList){
             String yhbm = KeyQuery.keyLookup(tUser.getYHBM(),TDepartCache.BMDM_BMMC_MAP);
@@ -47,5 +41,21 @@ public class DepartGenderTransformUtil {
             }
         }
         return tdhUserList;
+    }
+
+    public static TdhUser DGtranssingle(TdhUser tUser){
+
+
+        //将每一个user对象中的部门代码和性别转化一下
+        String yhbm = KeyQuery.keyLookup(tUser.getYHBM(),TDepartCache.BMDM_BMMC_MAP);
+        String yhxb = KeyQuery.keyLookup(tUser.getYHXB(),TGenderCache.CODE_YHXB_MAP);
+        tUser.setYHBM(yhbm);
+        tUser.setYHXB(yhxb);
+        if(tUser.getSFJY().equals("1")){
+            tUser.setSFJY("是");
+        }else{
+            tUser.setSFJY("否");
+        }
+        return tUser;
     }
 }

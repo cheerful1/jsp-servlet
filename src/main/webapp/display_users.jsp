@@ -22,6 +22,15 @@
             padding: 0;
         }
 
+        /*.container {*/
+
+        /*}*/
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 15px;
+        }
         .container {
             max-width: 1500px;
             margin: 20px auto;
@@ -29,20 +38,27 @@
             background-color: #f4f4f4;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 15px;
+            display: flex;
+            flex-direction: column; /* 垂直方向布局 */
+            justify-content: center; /* 水平居中 */
+            align-items: center; /* 垂直居中 */
         }
 
         .section-a {
             display: flex;
-            align-items: center;
+            flex-direction: row; /* 水平方向布局 */
+            align-items: center; /* 垂直居中 */
             gap: 10px;
             margin-bottom: 20px;
         }
+
+        /*.section-a {*/
+        /*    display: flex;*/
+        /*    flex-direction: row; !* 水平方向布局 *!*/
+        /*    align-items: center; !* 垂直居中 *!*/
+        /*    gap: 10px;*/
+        /*    margin-bottom: 20px;*/
+        /*}*/
 
         .centered {
             text-align: center;
@@ -87,6 +103,15 @@
             padding: 10px;
             text-align: left;
 
+        }
+        #btnQuery,#btnAdd{
+            width: 50px;
+            padding: 10px;
+            background-color: #4577a0;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
         }
 
 
@@ -241,19 +266,58 @@
          */
         $(".btn-query").click(function() {
             let index = $(this).data("index");
-            let jsonData  = JSON.stringify(list[index]);
-            // alert("查询：" + JSON.stringify(list[index]));
-            window.open("add_user.jsp?jsonData=" + encodeURIComponent(jsonData)+ "&mode=view", "_blank");
-
+            let user = null;
+            $.ajax({
+                url: "selectbyid",
+                method: "POST",
+                data: { yhid: list[index].yhid},
+                success: function(response) {
+                    var rdata =JSON.parse(response);
+                    if(rdata.code == 1){
+                        // alert(rdata.msg);
+                        user = rdata.object;
+                        console.log(user);
+                        // alert("查看成功！");
+                        let jsonData  = JSON.stringify(user);
+                        console.log("jsondata:",jsonData);
+                        window.open("add_user.jsp?jsonData=" + encodeURIComponent(jsonData)+ "&mode=view", "_blank");
+                    }else{
+                        alert(rdata.msg);
+                    }
+                },
+                error: function() {
+                    alert("查看失败，服务器开小差了！");
+                }
+            });
         });
         /**
          * 绑定编辑
          */
         $(".btn-edit").click(function() {
-            var index = $(this).data("index");
-            // 编写修改操作的逻辑，可以弹出一个模态框或跳转到编辑页面等
-            var updateData = JSON.stringify(list[index]);
-            window.open("add_user.jsp?jsonData=" + encodeURIComponent(updateData)+ "&mode=updateusers", "_blank");
+            let index = $(this).data("index");
+            let user = null;
+            $.ajax({
+                url: "selectbyid",
+                method: "POST",
+                data: { yhid: list[index].yhid},
+                success: function(response) {
+                    var rdata =JSON.parse(response);
+                    if(rdata.code == 1){
+                        user = rdata.object;
+                        var updateData = JSON.stringify(user);
+                        window.open("add_user.jsp?jsonData=" + encodeURIComponent(updateData)+ "&mode=updateusers", "_blank");
+
+                    }else{
+                        alert(rdata.msg);
+                    }
+                },
+                error: function() {
+                    alert("查看失败，服务器开小差了！");
+                }
+            });
+            doQuery();
+
+
         });
         /**
          * 绑定并确认删除
@@ -272,7 +336,7 @@
                         // 删除成功后，从 list 中移除对应项
                         list.splice(index, 1);
                         alert("删除成功！");
-                        displayListInTable(data);
+                        location.reload();
                     },
                     error: function() {
                         alert("删除失败，请重试！");
@@ -287,9 +351,7 @@
      * 页面函数
      */
     $(document).ready(function() {
-
         doQuery();
-
     });
 
     /**
@@ -299,6 +361,10 @@
      */
     function encodeStr(str) {
         return encodeURIComponent(str);
+    }
+
+    function refreshParent() {
+        location.reload();
     }
 
 

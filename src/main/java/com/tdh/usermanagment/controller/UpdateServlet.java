@@ -13,6 +13,7 @@ import com.tdh.usermanagment.entity.vo.MessageModel;
 import com.tdh.usermanagment.service.InsertService;
 import com.tdh.usermanagment.service.UpdateService;
 import com.tdh.usermanagment.utils.KeyQuery;
+import com.tdh.usermanagment.utils.RequestUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -40,12 +41,13 @@ public class UpdateServlet extends HttpServlet {
         request.setCharacterEncoding("utf-8");
         response.setContentType("text/html;charset = utf-8");
         try {
-            // 从请求中获取输入流
-            InputStream inputStream = request.getInputStream();
-            // 使用 Jackson ObjectMapper 将 JSON 数据转化为 TdhUser 对象
-            TdhUser tdhUser = objectMapper.readValue(inputStream, TdhUser.class);
+            // 创建TdhUser对象并设置属性
+            TdhUser user = new TdhUser();
+            //调用工具类将request请求中的字符串转化为实体类
+            RequestUtil requestUtil = new RequestUtil();
+            user = requestUtil.RequestToUser(request,user);
             // 调用 insertService 处理用户添加逻辑
-            MessageModel addmessageModel = updateService.updateUser(tdhUser);
+            MessageModel addmessageModel = updateService.updateUser(user);
             //java对象转化成json，封装到request中返回到前端
             String requestString = objectMapper.writeValueAsString(addmessageModel);
             if (addmessageModel.getCode()==1) {

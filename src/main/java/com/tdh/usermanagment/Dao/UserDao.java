@@ -282,6 +282,9 @@ public class UserDao {
                 sqlParams.add("%"+yhid_xm+"%");
                 sqlParams.add("%"+yhid_xm+"%");
             }
+            if(true){
+                sql += " ORDER BY PXH ASC ";
+            }
 
             ps = conn.prepareStatement(sql.replaceFirst("and", "where"));
             if(!sqlParams.isEmpty()){

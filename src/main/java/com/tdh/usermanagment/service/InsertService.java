@@ -7,6 +7,8 @@ import com.tdh.usermanagment.cache.TDepartCache;
 import com.tdh.usermanagment.cache.TGenderCache;
 import com.tdh.usermanagment.entity.TdhUser;
 import com.tdh.usermanagment.entity.vo.MessageModel;
+import com.tdh.usermanagment.utils.DateTransformUtil;
+import com.tdh.usermanagment.utils.DepartGenderTransformUtil;
 import com.tdh.usermanagment.utils.KeyQuery;
 
 import java.time.LocalDate;
@@ -29,10 +31,13 @@ import java.time.format.DateTimeFormatter;
  *                          是：进入下一轮逻辑判断
  *                          否：直接返回
  *          5.新增时将当前日期和当前时间分别存储到DJRQ和DJSJ字段中。
- *          6.上面没有问题之后，最终入库
+ *          6.前端字符串接收到的CSRQ需要从2023-12-15转化为20231215
+ *          7.上面没有问题之后，最终入库
  */
 public class InsertService {
     private final UserDao userDao = new UserDao();
+    private final DateTransformUtil  dateTransformUtil = new DateTransformUtil();
+    private final DepartGenderTransformUtil departGenderTransformUtil = new DepartGenderTransformUtil();
     /**
      * 添加用户的逻辑判断
      * @param tdhUser 用户对象
@@ -41,13 +46,6 @@ public class InsertService {
     public MessageModel addUser(TdhUser tdhUser) {
         MessageModel messageModel = new MessageModel();
         try {
-            // 1.先把部门和性别信息写入到缓存中
-            if (TGenderCache.CODE_YHXB_MAP.isEmpty() || TDepartCache.BMDM_BMMC_MAP.isEmpty()) {
-                DepartmentTransform departmentT = new DepartmentTransform();
-                GenderTransform genderT = new GenderTransform();
-                departmentT.transfromDepartment();
-                genderT.getGenderName();
-            }
             // 1.转换部门和性别信息
             String yhbm = KeyQuery.ValueLookup(tdhUser.getYHBM(), TDepartCache.BMDM_BMMC_MAP);
             String yhxb = KeyQuery.ValueLookup(tdhUser.getYHXB(), TGenderCache.CODE_YHXB_MAP);
@@ -100,8 +98,13 @@ public class InsertService {
                 return messageModel;
             }
 
+            //6.前端字符串接收到的CSRQ需要从2023-12-15转化为20231215
+            String user_csrq = tdhUser.getCSRQ();
+            String  formattedcsrq = dateTransformUtil.dateTrans(user_csrq);
+            tdhUser.setCSRQ(formattedcsrq);
 
-            // 6、上面没有问题之后，最终入库
+
+            // 7、上面没有问题之后，最终入库
             boolean flag = userDao.add_user(tdhUser);
              if(!flag){
                  messageModel.setCode(0);
