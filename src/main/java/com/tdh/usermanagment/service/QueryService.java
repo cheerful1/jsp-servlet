@@ -23,6 +23,13 @@ import java.util.List;
 public class QueryService {
     private final UserDao userDao = new UserDao();
 
+    /**
+     * 查询用户信息的方法。
+     *
+     * @param yhid_xm 用户ID或姓名（模糊查询）
+     * @param yhbm    用户部门（部门代码或名称）
+     * @return 包含查询结果的消息模型
+     */
     public MessageModel queryUser(String yhid_xm, String yhbm) {
         MessageModel messageModel = new MessageModel();
         // 1.转换部门信息
@@ -40,6 +47,7 @@ public class QueryService {
                 messageModel.setMsg("查询失败，未查询到用户！");
                 return messageModel;
             }
+
 
         } catch (Exception e) {
             e.printStackTrace();

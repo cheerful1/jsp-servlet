@@ -26,8 +26,6 @@ public class RequestUtil {
             String user_disable = request.getParameter("user_disable");
             String user_pxhStr = request.getParameter("user_pxh");
             try {
-                // 尝试将字符串参数转换为整数
-                int user_pxh = Integer.parseInt(user_pxhStr);
                 // 将获取的参数设置到 TdhUser 对象中
                 tuser.setYHID(user_id);
                 tuser.setYHXM(user_name);
@@ -36,7 +34,13 @@ public class RequestUtil {
                 tuser.setYHXB(user_gender);
                 tuser.setCSRQ(user_birthday);
                 tuser.setSFJY(user_disable);
-                tuser.setPXH(user_pxh);
+
+                if (user_pxhStr == null || user_pxhStr.isEmpty()){
+                    tuser.setPXH(0);
+                }else {
+                    int user_pxh = Integer.parseInt(user_pxhStr);
+                    tuser.setPXH(user_pxh);
+                }
 
             } catch (NumberFormatException e) {
                 // 抛出异常

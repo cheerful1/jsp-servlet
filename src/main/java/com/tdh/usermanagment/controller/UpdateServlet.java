@@ -21,12 +21,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
+
 
 /**
- * @author : wangshanjie
- *
+ * 更新用户信息的Servlet。
+ * 映射路径：/update_user
  */
 @WebServlet("/update_user")
 //编写一个类去继承HttpServlet类
@@ -36,7 +35,14 @@ public class UpdateServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         doPost(request,response);
     }
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    /**
+     * 处理HTTP POST请求，更新用户信息。
+     *
+     * @param request  HTTP请求对象，包含客户端提交的数据
+     * @param response HTTP响应对象，用于向客户端发送响应
+     * @throws IOException      如果发生输入或输出异常
+     */
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         //所有的请求都跳转到post里面来
         request.setCharacterEncoding("utf-8");
         response.setContentType("text/html;charset = utf-8");
@@ -57,16 +63,9 @@ public class UpdateServlet extends HttpServlet {
                 //失败也将消息返回给页面
                 response.getWriter().write(requestString);
             }
-
         } catch (IOException e) {
             e.printStackTrace();
-            MessageModel messageModel = new MessageModel();
-            messageModel.setCode(0);
-            messageModel.setMsg("保存失败！排序号必须是整数！");
-            String errorResponseString = objectMapper.writeValueAsString(messageModel);
-            response.getWriter().write(errorResponseString);
         }
-
     }
 
 }

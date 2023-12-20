@@ -1,4 +1,4 @@
-<%--
+<%@ page import="com.tdh.usermanagment.entity.TdhUser" %><%--
   Created by IntelliJ IDEA.
   User: wsj1997
   Date: 2023/12/14
@@ -22,15 +22,15 @@
             padding: 0;
         }
 
-        /*.container {*/
-
-        /*}*/
-
         .header {
             text-align: center;
             margin-bottom: 20px;
             font-size: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
+
         .container {
             max-width: 1500px;
             margin: 20px auto;
@@ -51,14 +51,6 @@
             gap: 10px;
             margin-bottom: 20px;
         }
-
-        /*.section-a {*/
-        /*    display: flex;*/
-        /*    flex-direction: row; !* 水平方向布局 *!*/
-        /*    align-items: center; !* 垂直居中 *!*/
-        /*    gap: 10px;*/
-        /*    margin-bottom: 20px;*/
-        /*}*/
 
         .centered {
             text-align: center;
@@ -113,6 +105,21 @@
             border-radius: 4px;
             cursor: pointer;
         }
+        #logout-button {
+            /*position: absolute;*/
+            top: 10px;
+            right: 10px;
+            padding: 10px;
+            background-color: #4577a0;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 50px;
+        }
+        h2 {
+            margin-right: 20px;
+        }
 
 
     </style>
@@ -120,9 +127,10 @@
 
 <body>
 <div class="container">
+    <h1>用户信息管理页面</h1>
     <div class="header">
-        <h1>用户信息管理页面</h1>
-        <h2>当前用户:<%=session.getAttribute("uname")%></h2>
+        <h2>当前用户ID:<%= session.getAttribute("user") != null ? ((TdhUser)session.getAttribute("user")).getYHID() : "未知用户" %>
+        </h2> <input type="button" id="logout-button" onclick="logout()" value="注销">
     </div>
     <div class="section-a">
         <label for="userName">用户姓名/用户ID：</label>
@@ -205,31 +213,6 @@
     function doAdd(){
         // 打开新的页面，注意大小并居中显示
         window.open('add_user.jsp?source=display_users', '新增用户', 'width=1100, height=900, top=200, left=400');
-    }
-
-    /**
-     * 展示所有用户的信息
-     */
-    function showUsers(){
-        $.ajax({
-            type: "POST",
-            url: "display_users",
-            success: function(response) {
-                var rdata =JSON.parse(response);
-                if(rdata.code == 1){
-                    //这里查询所有用户成功就不alert了直接，在B区显示
-                    // alert(rdata.msg);
-                    displayListInTable(rdata.object);
-                }else{
-                    alert(rdata.msg);
-                }
-            },
-            error: function(error) {
-                alert("查询用户失败，服务器开小差了！");
-                // 请求失败时的处理
-                console.error("失败: ", error);
-            }
-        });
     }
 
 
@@ -352,8 +335,8 @@
      */
     $(document).ready(function() {
         doQuery();
-    });
 
+    });
     /**
      *  模拟编码方法
      * @param str
@@ -362,10 +345,28 @@
     function encodeStr(str) {
         return encodeURIComponent(str);
     }
-
     function refreshParent() {
         location.reload();
     }
+
+    /**
+     * 注销按钮
+     */
+    function logout() {
+        // 使用Ajax调用Servlet销毁Session
+        $.ajax({
+            type: "POST",
+            url: "LogoutServlet",
+            success: function () {
+                alert("注销成功！");
+                // 注销成功后跳转到登录页面
+                window.location.href = "login.jsp";
+            },
+            error: function () {
+                alert("注销失败，请重试！");
+            }
+        });
+}
 
 
 

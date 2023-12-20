@@ -33,37 +33,48 @@ public class QueryServlet extends HttpServlet {
         doPost(request, response);
     }
 
+    /**
+     * 处理HTTP POST请求的方法，用于查询用户信息。
+     *
+     * @param request HTTP请求对象，包含客户端提交的数据
+     * @param response HTTP响应对象，用于向客户端发送响应
+     * @throws IOException 如果发生输入或输出异常
+     * @throws ServletException 如果发生Servlet异常
+     */
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        //所有的请求都跳转到post里面来
+        // 所有的请求都跳转到post里面来
         request.setCharacterEncoding("utf-8");
         response.setContentType("text/html;charset=utf-8");
 
         try {
-            //接收json流
+            // 接收json流
             InputStream inputStream = request.getInputStream();
-            QueryUser quser= objectMapper.readValue(inputStream, QueryUser.class);
+            QueryUser quser = objectMapper.readValue(inputStream, QueryUser.class);
 
-            //1、接收前端传递的参数。
+            // 1. 接收前端传递的参数。
             String encode_yhid_xm = quser.getEncodedUserName();
             String encode_yhbm = quser.getEncodeduserDepartment();
-            //1.解码参数
+
+            // 1. 解码参数
             String decode_yhid_xm = URLDecoder.decode(encode_yhid_xm, "UTF-8");
             String decode_yhbm = URLDecoder.decode(encode_yhbm, "UTF-8");
 
-            //2.调用service层的方法返回消息对象
+            // 2. 调用service层的方法返回消息对象
             MessageModel messageModel = queryService.queryUser(decode_yhid_xm, decode_yhbm);
 
-            //java对象转化成json，封装到request中返回到前端
+            // java对象转化成json，封装到request中返回到前端
             String requestString = objectMapper.writeValueAsString(messageModel);
+
+            // 返回响应
             if (messageModel.getCode() == 1) {
                 // 将 JSON 字符串写入响应流
                 response.getWriter().write(requestString);
             } else {
-                //失败也将消息返回给页面
+                // 失败也将消息返回给页面
                 response.getWriter().write(requestString);
             }
 
-        }catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

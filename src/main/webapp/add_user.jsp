@@ -26,6 +26,15 @@
         border-radius: 4px;
         cursor: pointer;
     }
+    #btn-return{
+        width: 50px;
+        padding: 10px;
+        background-color: #4577a0;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
 </style>
 <body>
 <div class="container">
@@ -107,6 +116,40 @@
     const mode = urlParams.get('mode');
 
     /**
+     * 发送 AJAX 请求的通用函数
+     * @param {string} url - 请求的URL
+     * @param {string} method - 请求方法
+     * @param {Object} data - 请求数据
+     * @param {string} successMsg - 成功时的提示消息
+     * @param {string} errorMsg - 失败时的提示消息
+     */
+    function sendAjaxRequest(url, method, data, successMsg, errorMsg) {
+        $.ajax({
+            url: url,
+            method: method,
+            data: data,
+            success: function (response) {
+                try {
+                    var rdata = JSON.parse(response);
+                    if (rdata.code === 1) {
+                        alert(successMsg);
+                        window.opener.location.reload();
+                        window.close();
+                    } else {
+                        alert(rdata.msg);
+                    }
+                } catch (error) {
+                    console.error('JSON 解析错误:', error);
+                }
+            },
+            error: function (error) {
+                alert(errorMsg);
+                console.error('失败:', error);
+            }
+        });
+    }
+
+    /**
      * 点击保存按钮，发送请求
      */
     function doSave(){
@@ -150,54 +193,13 @@
             $("#user_pass, #user_repass").removeClass("highlight");
         }
 
-        /**
-         * 填写无误进行提交
-         */
-        if(flag && mode !=="updateusers"){
-
-            // 使用 AJAX 发送 JSON 数据到后端
-            $.ajax({
-                url: 'add_users',
-                method: 'POST',
-                data:  params ,
-                success: function(response) {
-                    var rdata =JSON.parse(response);
-                    if(rdata.code == 1){
-                        alert(rdata.msg);
-                        //回调
-                        window.opener.location.reload();
-                        window.close()
-                    }else{
-                        alert(rdata.msg);
-                    }
-                },
-                error: function(error) {
-                    alert("添加用户失败，服务器开小差了！");
-                    console.error('失败:', error);
-                }
-            });}else{
-
-            // 使用 AJAX 发送 JSON 数据到后端
-            $.ajax({
-                url: 'update_user',
-                method: 'POST',
-                data: params,
-                success: function(response) {
-                    var rdata =JSON.parse(response);
-                    if(rdata.code == 1){
-                        alert(rdata.msg);
-                        window.opener.location.reload();
-                        window.close()
-                    }else{
-                        alert(rdata.msg);
-                    }
-                },
-                error: function(error) {
-                    alert("更新用户失败，服务器开小差了！");
-                    console.error('失败:', error);
-                }
-            });
-
+        //校验没有问题，发送ajax请求
+        if (flag && mode !== "updateusers") {
+            // 添加用户
+            sendAjaxRequest('add_users', 'POST', params, '添加用户成功', '添加用户失败，服务器开小差了！');
+        } else {
+            // 更新用户
+            sendAjaxRequest('update_user', 'POST', params, '更新用户成功', '更新用户失败，服务器开小差了！');
         }
     }
 

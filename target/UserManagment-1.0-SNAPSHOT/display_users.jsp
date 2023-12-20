@@ -1,4 +1,4 @@
-<%--
+<%@ page import="com.tdh.usermanagment.entity.TdhUser" %><%--
   Created by IntelliJ IDEA.
   User: wsj1997
   Date: 2023/12/14
@@ -30,7 +30,11 @@
             text-align: center;
             margin-bottom: 20px;
             font-size: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
+
         .container {
             max-width: 1500px;
             margin: 20px auto;
@@ -113,6 +117,21 @@
             border-radius: 4px;
             cursor: pointer;
         }
+        #logout-button {
+            /*position: absolute;*/
+            top: 10px;
+            right: 10px;
+            padding: 10px;
+            background-color: #4577a0;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 50px;
+        }
+        h2 {
+            margin-right: 20px;
+        }
 
 
     </style>
@@ -120,9 +139,10 @@
 
 <body>
 <div class="container">
+    <h1>用户信息管理页面</h1>
     <div class="header">
-        <h1>用户信息管理页面</h1>
-        <h2>当前用户:<%=session.getAttribute("uname")%></h2>
+        <h2>当前用户ID:<%= session.getAttribute("user") != null ? ((TdhUser)session.getAttribute("user")).getYHID() : "未知用户" %>
+        </h2> <input type="button" id="logout-button" onclick="logout()" value="注销">
     </div>
     <div class="section-a">
         <label for="userName">用户姓名/用户ID：</label>
@@ -352,8 +372,8 @@
      */
     $(document).ready(function() {
         doQuery();
-    });
 
+    });
     /**
      *  模拟编码方法
      * @param str
@@ -362,10 +382,31 @@
     function encodeStr(str) {
         return encodeURIComponent(str);
     }
-
     function refreshParent() {
         location.reload();
     }
+
+    /**
+     * 注销按钮
+     */
+    function logout() {
+        // 使用Ajax调用Servlet销毁Session
+        $.ajax({
+            type: "POST",
+            url: "LogoutServlet",
+            success: function () {
+                alert("注销成功！");
+                // 注销成功后跳转到登录页面
+                window.location.href = "login.jsp";
+            },
+            error: function () {
+                alert("注销失败，请重试！");
+            }
+        });
+
+
+
+}
 
 
 

@@ -1,10 +1,7 @@
 package com.tdh.usermanagment.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tdh.usermanagment.entity.TdhUser;
-import com.tdh.usermanagment.Dao.UserDao;
 import com.tdh.usermanagment.entity.vo.MessageModel;
-import com.tdh.usermanagment.service.QueryService;
 import com.tdh.usermanagment.service.Selectbyidservice;
 
 import javax.servlet.ServletException;
@@ -15,23 +12,26 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * 根据id查询用户
- * @author : wangshanjie
- * @date :
+ * 根据用户ID查询用户信息的Servlet。
+ * 映射路径：/selectbyid
  */
 @WebServlet("/selectbyid")
 //编写一个类去继承HttpServlet类
 public class SelectByIdServlet extends HttpServlet {
     private Selectbyidservice selectbyidservice = new Selectbyidservice();
 
-
-
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         doPost(request,response);
     }
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    /**
+     * 处理HTTP POST请求，根据用户ID查询用户信息。
+     *
+     * @param request  HTTP请求对象，包含客户端提交的数据
+     * @param response HTTP响应对象，用于向客户端发送响应
+     */
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
         try{
             //所有的请求都跳转到post里面来
             request.setCharacterEncoding("utf-8");
@@ -54,7 +54,6 @@ public class SelectByIdServlet extends HttpServlet {
         }catch (IOException e){
             e.printStackTrace();
         }
-
     }
 
 }

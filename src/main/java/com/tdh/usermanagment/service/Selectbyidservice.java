@@ -54,13 +54,17 @@ public class Selectbyidservice {
                 //5.数据库中没有给yhid赋值
                 tuser.setYHID(yhid);
                 //6、出生日期需要从20231010转化成2023-10-10
-                String csrq = tuser.getCSRQ();
-                String tcsrq = dateTransformUtil.dateTrans1(csrq);
-                tuser.setCSRQ(tcsrq);
+                if (tuser.getCSRQ()!=null && !tuser.getCSRQ().isEmpty()){
+                    String csrq = tuser.getCSRQ();
+                    String tcsrq = dateTransformUtil.dateTrans1(csrq);
+                    tuser.setCSRQ(tcsrq);
+                }
 
                 messageModel.setObject(tuser);
                 return messageModel;
             }
+
+
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -8,18 +8,24 @@
     <script src="js/jquery-3.1.1.min.js"></script>
 </head>
 
-
+<%--登录的主要页面--%>
 <body>
     <div class="container">
-        <form action="login" method="post" id="loginForm">
+        <form  action="login" method="post" id="loginForm" >
             <label for="uname">账号：</label>
+<%--            --%>
             <input type="text" name = "uname" id="uname" value="${messageModel.object.YHID}" required>
+            <input type="checkbox" name="rememberUsername" id="rememberUsername" checked>记住账号
+            <br>
             <br>
             <label for="upwd">口令：</label>
-            <input type="password" name="upwd" id="upwd" value="${messageModel.object.YHKL}" required>
+<%--           --%>
+            <input type="password" name="upwd" id="upwd" required>
+            <input type="checkbox" name="rememberPassword" id="rememberPassword"  value="${messageModel.object.YHKL}" checked>记住口令
+            <br>
             <br>
             <span id="msg" style="color: red;font-size: 12px">${messageModel.msg}</span><br>
-            <button type="button" id="loginBtn">登录</button>
+            <button type="submit" id="loginBtn">登录</button>
             <button type="reset">重置</button>
             <%--        <span style="color: red;font-size: 12px"><%=request.getAttribute("msg")%></span>--%>
             <%--        msg默认是空的字符串--%>
@@ -39,6 +45,26 @@
      * 5、如果不为空那么提交表单
      */
     $("#loginBtn").click(function (){
+            // 从表单获取数据
+            var username = document.getElementById("uname").value;
+            var password = document.getElementById("upwd").value;
+
+
+            if (document.getElementById("rememberUsername").checked) {
+                setCookie("rememberedUsername", username, 365);
+            } else {
+                // If not checked, remove the cookie
+                deleteCookie("rememberedUsername");
+            }
+
+            //检查时候选上了
+            if (document.getElementById("rememberPassword").checked) {
+                setCookie("rememberedPassword", password, 365);
+            } else {
+                // If not checked, remove the cookie
+                deleteCookie("rememberedPassword");
+            }
+
             //2、获取用户姓名和密码的值
             var uname = $("#uname").val();
             var upwd = $("#upwd").val();
@@ -56,8 +82,6 @@
             }
             //5、如果不为空那么提交表单
             $("#loginForm").submit();
-
-
 
     });
     // 重置按钮点击事件
@@ -83,6 +107,52 @@
             return false;
         }
     }
+
+    window.onload = function () {
+        var rememberedUsername = getCookie("rememberedUsername");
+        var rememberedPassword = getCookie("rememberedPassword");
+
+        if (rememberedUsername) {
+            document.getElementById("uname").value = rememberedUsername;
+            document.getElementById("rememberUsername").checked = true;
+        }
+
+        if (rememberedPassword) {
+            document.getElementById("upwd").value = rememberedPassword;
+            document.getElementById("rememberPassword").checked = true;
+        }
+    };
+
+
+
+    // 设置cookie的时间
+    function setCookie(name, value, days) {
+        var expires = "";
+        if (days) {
+            var date = new Date();
+            date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+            expires = "; expires=" + date.toUTCString();
+        }
+        document.cookie = name + "=" + (value || "") + expires + "; path=/";
+    }
+
+    // 获得cookie的值
+    function getCookie(name) {
+        var nameEQ = name + "=";
+        var ca = document.cookie.split(";");
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) === " ") c = c.substring(1, c.length);
+            if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+        }
+        return null;
+    }
+
+    // Function to delete a cookie
+    function deleteCookie(name) {
+        document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    }
+
 </script>
 
 

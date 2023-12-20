@@ -1,7 +1,5 @@
 package com.tdh.usermanagment.service;
 
-import com.tdh.usermanagment.Dao.DepartmentTransform;
-import com.tdh.usermanagment.Dao.GenderTransform;
 import com.tdh.usermanagment.Dao.UserDao;
 import com.tdh.usermanagment.cache.TDepartCache;
 import com.tdh.usermanagment.cache.TGenderCache;
@@ -14,13 +12,17 @@ import com.tdh.usermanagment.utils.KeyQuery;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import org.springframework.util.DigestUtils;
 
 /**
  * @author : wangshanjie
- * 添加用户逻辑判断：
+ * 业务层添加用户逻辑判断：
  *      主要完成：
  *          1. 从传入的tdhUser得到的部门代码和用户性别转换成相应的代码并存库（ 男 -> 09_00003-1 ， 立案庭 -> 32010001）
  *          2. 翻译排序号并存库 （是：1， 否：0）
+ *          3、判断账户不能包含特殊字符
  *          3. 判断tdhUser的传入的YHID是否已经存在数据库中，
  *              存在：直接返回
  *              不存在：-> 判断ID是不是"admin"（不可以包含！）
@@ -31,13 +33,16 @@ import java.time.format.DateTimeFormatter;
  *                          是：进入下一轮逻辑判断
  *                          否：直接返回
  *          5.新增时将当前日期和当前时间分别存储到DJRQ和DJSJ字段中。
- *          6.前端字符串接收到的CSRQ需要从2023-12-15转化为20231215
- *          7.上面没有问题之后，最终入库
+ *          6. 如果接收到的出生日期字符串为空：那么不转化
+ *             如果不为空需要转化下，前端字符串接收到的CSRQ需要从2023-12-15转化为20231215
+ *          7、用户密码加密进数据库
+ *          8.上面没有问题之后，最终入库
  */
 public class InsertService {
     private final UserDao userDao = new UserDao();
     private final DateTransformUtil  dateTransformUtil = new DateTransformUtil();
     private final DepartGenderTransformUtil departGenderTransformUtil = new DepartGenderTransformUtil();
+    private static final String SALT = "tdh";
     /**
      * 添加用户的逻辑判断
      * @param tdhUser 用户对象
@@ -47,6 +52,10 @@ public class InsertService {
         MessageModel messageModel = new MessageModel();
         try {
             // 1.转换部门和性别信息
+            //6. 如果接收到的信息为空
+            if(tdhUser.getYHXB()==null || tdhUser.getYHXB().isEmpty()){
+                tdhUser.setYHXB("男");
+            }
             String yhbm = KeyQuery.ValueLookup(tdhUser.getYHBM(), TDepartCache.BMDM_BMMC_MAP);
             String yhxb = KeyQuery.ValueLookup(tdhUser.getYHXB(), TGenderCache.CODE_YHXB_MAP);
             tdhUser.setYHBM(yhbm);
@@ -55,6 +64,15 @@ public class InsertService {
             // 2、转换是否激活的信息
             tdhUser.setSFJY("是".equals(tdhUser.getSFJY()) ? "1" : "0");
 
+            //3、判断账户不能包含特殊字符
+            String validPattern = "[`~!@#$%^&*()+=|{}':;',\\\\[\\\\].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]";
+            //使用Matcher类的find()方法来查找validPattern中的无效字符
+            Matcher matcher = Pattern.compile(validPattern).matcher(tdhUser.getYHID());
+            if (matcher.find()) {
+                messageModel.setCode(0);
+                messageModel.setMsg("用户ID存在非法的字符！请重新输入！");
+                return messageModel;
+            }
             //3. 判断tdhUser的传入的YHID是否已经存在数据库中，
             if (userDao.query_user(tdhUser.getYHID())!=null){
                 messageModel.setCode(0);
@@ -98,13 +116,19 @@ public class InsertService {
                 return messageModel;
             }
 
-            //6.前端字符串接收到的CSRQ需要从2023-12-15转化为20231215
-            String user_csrq = tdhUser.getCSRQ();
-            String  formattedcsrq = dateTransformUtil.dateTrans(user_csrq);
-            tdhUser.setCSRQ(formattedcsrq);
+            //6. 如果接收到的字符串为空：那么不转化
+            //   如果不为空需要转化下，前端字符串接收到的CSRQ需要从2023-12-15转化为20231215
+            if (tdhUser.getCSRQ()!=null && !tdhUser.getCSRQ().isEmpty()) {
+                String user_csrq = tdhUser.getCSRQ();
+                String  formattedcsrq = dateTransformUtil.dateTrans(user_csrq);
+                tdhUser.setCSRQ(formattedcsrq);
+            }
 
+            //7、用户密码加密进数据库
+            String encryptPassword = DigestUtils.md5DigestAsHex((SALT + tdhUser.getYHKL()).getBytes()).substring(0, 19);
+            tdhUser.setYHKL(encryptPassword);
 
-            // 7、上面没有问题之后，最终入库
+            //8、上面没有问题之后，最终入库
             boolean flag = userDao.add_user(tdhUser);
              if(!flag){
                  messageModel.setCode(0);

@@ -8,6 +8,7 @@ import com.tdh.usermanagment.cache.TGenderCache;
 import com.tdh.usermanagment.entity.TdhUser;
 import com.tdh.usermanagment.entity.vo.MessageModel;
 import com.tdh.usermanagment.utils.KeyQuery;
+import org.springframework.util.DigestUtils;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -27,6 +28,13 @@ import java.time.format.DateTimeFormatter;
  */
 public class UpdateService {
     private final UserDao userDao = new UserDao();
+    private static final String SALT = "tdh";
+    /**
+     * 更新用户信息的方法。
+     *
+     * @param tdhUser 包含更新信息的TdhUser对象
+     * @return 包含更新结果的消息模型
+     */
     public MessageModel updateUser(TdhUser tdhUser) {
         MessageModel messageModel = new MessageModel();
         try {
@@ -38,7 +46,6 @@ public class UpdateService {
 
             // 2、转换是否激活的信息
             tdhUser.setSFJY("是".equals(tdhUser.getSFJY()) ? "1" : "0");
-
 
             // 3. 判断排序号是否是整型数字：
             if (tdhUser.getPXH() % 1 !=0){
@@ -70,10 +77,15 @@ public class UpdateService {
             DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
 
             // 解析字符串为 LocalDate
-            LocalDate date = LocalDate.parse(user_csrq, inputFormatter);
-            String formattedcsrq = date.format(outputFormatter);
-            tdhUser.setCSRQ(formattedcsrq);
+            if (tdhUser.getCSRQ()!=null && !tdhUser.getCSRQ().isEmpty()){
+                LocalDate date = LocalDate.parse(user_csrq, inputFormatter);
+                String formattedcsrq = date.format(outputFormatter);
+                tdhUser.setCSRQ(formattedcsrq);
+            }
 
+            //6、用户密码加密进数据库
+            String encryptPassword = DigestUtils.md5DigestAsHex((SALT + tdhUser.getYHKL()).getBytes()).substring(0, 19);
+            tdhUser.setYHKL(encryptPassword);
 
             // 5、上面没有问题之后，最终入库，入库是否成功判断
             if(userDao.update_user(tdhUser)<=0){

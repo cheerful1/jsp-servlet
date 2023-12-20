@@ -186,6 +186,7 @@ public class UserDao {
             while (rs.next()){
                 TdhUser tUser = new TdhUser();
                 //todo 设置传入字段的时候，不要用序号用字段名称，不然不好区分。(完成)
+                tUser.setYHID(yhid);
                 tUser.setYHXM(rs.getString("YHXM"));
                 tUser.setYHKL(rs.getString("YHKL"));
                 tUser.setYHXB(rs.getString("YHXB"));

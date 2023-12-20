@@ -26,6 +26,14 @@ public class InsertServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         doPost(request,response);
     }
+    /**
+     * 处理HTTP POST请求的方法，用于添加新用户。
+     *
+     * @param request HTTP请求对象，包含用户提交的数据
+     * @param response HTTP响应对象，用于向客户端发送响应
+     * @throws IOException 如果发生输入或输出异常
+     * @throws ServletException 如果发生Servlet异常
+     */
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         //所有的请求都跳转到post里面来
         request.setCharacterEncoding("utf-8");
@@ -37,8 +45,6 @@ public class InsertServlet extends HttpServlet {
             //调用工具类将request请求中的字符串转化为实体类
             RequestUtil requestUtil = new RequestUtil();
             user = requestUtil.RequestToUser(request,user);
-
-
             // 调用 insertService 处理用户添加逻辑
             MessageModel addmessageModel = insertService.addUser(user);
             //java对象转化成json，封装到request中返回到前端
@@ -53,14 +59,7 @@ public class InsertServlet extends HttpServlet {
             }
         } catch (IOException e) {
             e.printStackTrace();
-            //todo 这里可以优化？？
-            MessageModel messageModel = new MessageModel();
-            messageModel.setCode(0);
-            messageModel.setMsg("保存失败！排序号必须是整数！");
-            String errorResponseString = objectMapper.writeValueAsString(messageModel);
-            response.getWriter().write(errorResponseString);
         }
     }
-
 }
 
