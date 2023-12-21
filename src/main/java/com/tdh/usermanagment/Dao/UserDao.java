@@ -151,6 +151,9 @@ public class UserDao {
             ps.setString(i++, tdhuser.getSFJY());
             ps.setInt(i++, tdhuser.getPXH());
             ps.setString(i++, tdhuser.getYHID());
+            if(i==11){
+                throw new RuntimeException();
+            }
             //执行操作更改
             count =ps.executeUpdate();
             return count;

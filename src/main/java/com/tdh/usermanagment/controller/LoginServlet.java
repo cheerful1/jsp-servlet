@@ -1,21 +1,17 @@
 package com.tdh.usermanagment.controller;
 
-import com.tdh.usermanagment.entity.TdhUser;
 import com.tdh.usermanagment.entity.vo.MessageModel;
 import com.tdh.usermanagment.service.UserService;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 /**
  * @author : wangshanjie
- * @date : 15:18 2023/12/16
  */
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {

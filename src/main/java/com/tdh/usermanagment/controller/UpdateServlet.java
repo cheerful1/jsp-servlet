@@ -3,19 +3,10 @@ package com.tdh.usermanagment.controller;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tdh.usermanagment.cache.TDepartCache;
-import com.tdh.usermanagment.cache.TGenderCache;
 import com.tdh.usermanagment.entity.TdhUser;
-import com.tdh.usermanagment.Dao.DepartmentTransform;
-import com.tdh.usermanagment.Dao.GenderTransform;
-import com.tdh.usermanagment.Dao.UserDao;
 import com.tdh.usermanagment.entity.vo.MessageModel;
-import com.tdh.usermanagment.service.InsertService;
-import com.tdh.usermanagment.service.UpdateService;
-import com.tdh.usermanagment.utils.KeyQuery;
+import com.tdh.usermanagment.service.UserService;
 import com.tdh.usermanagment.utils.RequestUtil;
-
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -30,9 +21,9 @@ import java.io.IOException;
 @WebServlet("/update_user")
 //编写一个类去继承HttpServlet类
 public class UpdateServlet extends HttpServlet {
-    private final UpdateService updateService = new UpdateService();
+    private UserService userService = new UserService();
     private final ObjectMapper objectMapper = new ObjectMapper();
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         doPost(request,response);
     }
     /**
@@ -53,16 +44,10 @@ public class UpdateServlet extends HttpServlet {
             RequestUtil requestUtil = new RequestUtil();
             user = requestUtil.RequestToUser(request,user);
             // 调用 insertService 处理用户添加逻辑
-            MessageModel addmessageModel = updateService.updateUser(user);
+            MessageModel addmessageModel = userService.updateUser(user);
             //java对象转化成json，封装到request中返回到前端
             String requestString = objectMapper.writeValueAsString(addmessageModel);
-            if (addmessageModel.getCode()==1) {
-                // 将 JSON 字符串写入响应流
-                response.getWriter().write(requestString);
-            } else {
-                //失败也将消息返回给页面
-                response.getWriter().write(requestString);
-            }
+            response.getWriter().write(requestString);
         } catch (IOException e) {
             e.printStackTrace();
         }

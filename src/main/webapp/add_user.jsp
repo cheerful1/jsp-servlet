@@ -1,11 +1,3 @@
-<%@ page import="java.text.SimpleDateFormat" %>
-<%@ page import="java.util.Date" %><%--
-  Created by IntelliJ IDEA.
-  User: wsj1997
-  Date: 2023/12/14
-  Time: 20:07
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html lang="en">
@@ -17,16 +9,7 @@
     <title>Add Users</title>
 </head>
 <style>
-    #btn-save{
-        width: 50px;
-        padding: 10px;
-        background-color: #4577a0;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-    #btn-return{
+    #btn-return,#btn-save{
         width: 50px;
         padding: 10px;
         background-color: #4577a0;
@@ -63,18 +46,18 @@
                     <th>
                         <select id="user_department" name="user_department" required>
                             <option value="">请选择部门</option>
-                            <option value="立案庭">立案庭</option>
-                            <option value="业务庭">业务庭</option>
-                            <option value="办公室">办公室</option>
+                            <option value="32010001">立案庭</option>
+                            <option value="32010002">业务庭</option>
+                            <option value="32010003">办公室</option>
                         </select>
                     </th>
                     <th><label for="user_gender">用户性别：</label></th>
                     <th>
                         <select  id="user_gender" name="user_gender">
                             <option value="">请选择性别</option>
-                            <option value="男">男</option>
-                            <option value="女">女</option>
-                            <option value="其他">其他</option>
+                            <option value="09_00003-1">男</option>
+                            <option value="09_00003-2">女</option>
+                            <option value="09_00003-255">其他</option>
                         </select>
                     </th>
                 </tr>
@@ -114,6 +97,9 @@
     const urlParams = new URLSearchParams(window.location.search);
     const jsonDataParam = urlParams.get('jsonData');
     const mode = urlParams.get('mode');
+    const YHID = urlParams.get('yhid');
+
+
 
     /**
      * 发送 AJAX 请求的通用函数
@@ -150,12 +136,47 @@
     }
 
     /**
-     * 点击保存按钮，发送请求
+     * 根据id来查询数据,发送ajax请求，返回user对象
+     * @param {number} yhid - 要查询的用户ID
+     */
+    function selectsingedataRequest(yhid){
+        var user = null;
+        $.ajax({
+            url: "selectbyid",
+            method: "POST",
+            data: { yhid: yhid },
+            success: function(response) {
+                var rdata =JSON.parse(response);
+                if(rdata.code == 1){
+                    user = rdata.object;
+                    $("#user_id").val(user.yhid);
+                    $("#user_name").val(user.yhxm);
+                    $("#user_pass").val(user.yhkl);
+                    $("#user_repass").val(user.yhkl);
+                    $("#user_birthday").val(user.csrq);
+                    $("#user_department").val(user.yhbm);
+                    $("#user_gender").val(user.yhxb);
+                    $("#user_pxh").val(user.pxh);
+                    $("#user_disable").prop("checked",user.sfjy === "是");
+                }else{
+                    alert(rdata.msg);
+                }
+            },
+            error: function() {
+                alert("查看失败，服务器开小差了！");
+            }
+        });
+    }
+
+
+    /**
+     * 点击保存按钮，发送保存请求
      */
     function doSave(){
 
         var params = $("#userForm").serialize();
         console.log(params);
+
 
         /**
          * 判断必填的字段
@@ -203,20 +224,13 @@
         }
     }
 
-    function displaysingledata() {
-        if (jsonDataParam) {
-            // 解码
-            let jsonData = JSON.parse(decodeURIComponent(jsonDataParam));
-            $("#user_id").val(jsonData.yhid);
-            $("#user_name").val(jsonData.yhxm);
-            $("#user_pass").val(jsonData.yhkl);
-            $("#user_repass").val(jsonData.yhkl);
-            $("#user_birthday").val(jsonData.csrq);
-            $("#user_department").val(jsonData.yhbm);
-            $("#user_gender").val(jsonData.yhxb);
-            $("#user_pxh").val(jsonData.pxh);
-            $("#user_disable").prop("checked",jsonData.sfjy === "是");
 
+    /**
+     * 页面展示函数，放在回调函数里面
+     */
+    function displaysingledata() {
+        selectsingedataRequest(YHID);
+        if (mode === 'view'){
             //view模式是查询
             if (mode === 'view') {
                 // 禁用全局的输入
@@ -224,16 +238,19 @@
                 // 隐藏保存按钮
                 $("#btn-save").hide();
             }
-            //updateusers模式是更新用户的数据
-            if(mode === 'updateusers'){
-                $("#user_id").attr("readonly",true)
-            }
+        }
+        //updateusers模式是更新用户的数据
+        if(mode === 'updateusers'){
+            $("#user_id").attr("readonly",true)
         }
     }
 
-    $(document).ready(function () {
-        displaysingledata();
 
+
+    $(document).ready(function () {
+        if (mode !=='add'){
+            displaysingledata();
+        }
         $("#btn-return").click(function () {
             window.close();
         });

@@ -1,6 +1,5 @@
 package com.tdh.usermanagment.controller;
 
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -20,13 +19,11 @@ public class LogoutServlet extends HttpServlet {
      *
      * @param request  HTTP请求对象，包含客户端提交的数据
      * @param response HTTP响应对象，用于向客户端发送响应
-     * @throws ServletException 如果发生Servlet异常
      * @throws IOException      如果发生输入或输出异常
      */
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws  IOException {
         // 获取当前Session
         HttpSession session = request.getSession(false);
-
         // 如果Session存在，使其无效
         if (session != null) {
             session.invalidate();

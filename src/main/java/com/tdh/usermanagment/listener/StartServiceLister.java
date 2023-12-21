@@ -10,8 +10,7 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
 /**
- * @author : wangshanjie
- * @date : 10:28 2023/12/18
+ * @author : wangshanjie、
  */
 
 @WebListener
@@ -26,7 +25,7 @@ public class StartServiceLister implements ServletContextListener {
             departmentT.transfromDepartment();
             genderT.getGenderName();
         }
-        System.out.println(TGenderCache.CODE_YHXB_MAP);
+//        System.out.println(TGenderCache.CODE_YHXB_MAP);
     }
 
     @Override

@@ -1,8 +1,5 @@
 package com.tdh.usermanagment.entity.vo;
 
-/**
- * @author : wangshanjie
- */
 
 /**
  * 消息模型对象

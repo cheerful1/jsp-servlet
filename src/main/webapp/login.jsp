@@ -13,13 +13,11 @@
     <div class="container">
         <form  action="login" method="post" id="loginForm" >
             <label for="uname">账号：</label>
-<%--            --%>
             <input type="text" name = "uname" id="uname" value="${messageModel.object.YHID}" required>
             <input type="checkbox" name="rememberUsername" id="rememberUsername" checked>记住账号
             <br>
             <br>
             <label for="upwd">口令：</label>
-<%--           --%>
             <input type="password" name="upwd" id="upwd" required>
             <input type="checkbox" name="rememberPassword" id="rememberPassword"  value="${messageModel.object.YHKL}" checked>记住口令
             <br>
@@ -27,8 +25,6 @@
             <span id="msg" style="color: red;font-size: 12px">${messageModel.msg}</span><br>
             <button type="submit" id="loginBtn">登录</button>
             <button type="reset">重置</button>
-            <%--        <span style="color: red;font-size: 12px"><%=request.getAttribute("msg")%></span>--%>
-            <%--        msg默认是空的字符串--%>
         </form>
     </div>
 </body>
@@ -125,7 +121,12 @@
 
 
 
-    // 设置cookie的时间
+    /**
+     * 设置 cookie的时间
+     * @param {string} name - cookie 的名称
+     * @param {string} value - cookie 的值
+     * @param {number} days - cookie 的过期时间（天数），可选参数，如果不提供则为 session cookie
+     */
     function setCookie(name, value, days) {
         var expires = "";
         if (days) {
@@ -136,7 +137,11 @@
         document.cookie = name + "=" + (value || "") + expires + "; path=/";
     }
 
-    // 获得cookie的值
+    /**
+     * 获取指定名称的 cookie 值
+     * @param {string} name - 要获取的 cookie 的名称
+     * @returns {string|null} - 如果找到指定名称的 cookie，则返回其值；否则返回 null
+     */
     function getCookie(name) {
         var nameEQ = name + "=";
         var ca = document.cookie.split(";");
@@ -148,11 +153,13 @@
         return null;
     }
 
-    // Function to delete a cookie
+    /**
+     * 删除指定名称的 cookie
+     * @param {string} name - 要删除的 cookie 的名称
+     */
     function deleteCookie(name) {
         document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     }
-
 </script>
 
 

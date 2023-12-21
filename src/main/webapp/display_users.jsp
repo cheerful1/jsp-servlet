@@ -1,10 +1,4 @@
-<%@ page import="com.tdh.usermanagment.entity.TdhUser" %><%--
-  Created by IntelliJ IDEA.
-  User: wsj1997
-  Date: 2023/12/14
-  Time: 14:38
-  To change this template use File | Settings | File Templates.
---%>
+<%@ page import="com.tdh.usermanagment.entity.TdhUser" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
@@ -65,18 +59,6 @@
             box-sizing: border-box;
         }
 
-        button {
-            padding: 9px;
-            background-color: #4c8caf;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #4c8caf;
-        }
 
         body {
             font-family: 'Arial', sans-serif;
@@ -96,7 +78,7 @@
             text-align: left;
 
         }
-        #btnQuery,#btnAdd{
+        #btnQuery,#btnAdd,#btn-query,#btn-edit,#btn-delete{
             width: 50px;
             padding: 10px;
             background-color: #4577a0;
@@ -139,18 +121,16 @@
         <label for="userDepartment">用户部门：</label>
         <select id="userDepartment">
             <option value="">请选择部门</option>
-            <option value="立案庭">立案庭</option>
-            <option value="业务庭">业务庭</option>
-            <option value="办公室">办公室</option>
+            <option value="32010001">立案庭</option>
+            <option value="32010002">业务庭</option>
+            <option value="32010003">办公室</option>
         </select>
         <input type="button" id="btnQuery" onclick="doQuery()" value="查询">
         <input type="button" id="btnAdd" onclick="doAdd()" value="新增">
 
     </div>
 
-    <!-- 用户信息列表可以在这里添加 -->
     <table id="usertable">
-        <!--用于定义表格的表头部分的标签,将表格的主体部分标记为表格的主要数据区域-->
         <thead>
         <tr>
             <th class=centered>序号</th>
@@ -163,9 +143,7 @@
             <th class=centered>操作 </th>
         </tr>
         </thead>
-        <!--        用于定义表格主体部分的标签-->
         <tbody>
-
         </tbody>
     </table>
 
@@ -192,8 +170,6 @@
             success: function(response) {
                 var rdata =JSON.parse(response);
                 if(rdata.code == 1){
-                    //这里查询成功就不alert了直接，在B区显示
-                    // alert(rdata.msg);
                     displayListInTable(rdata.object);
                 }else{
                     alert(rdata.msg);
@@ -212,131 +188,47 @@
      */
     function doAdd(){
         // 打开新的页面，注意大小并居中显示
-        window.open('add_user.jsp?source=display_users', '新增用户', 'width=1100, height=900, top=200, left=400');
+        window.open('add_user.jsp?source=display_users&mode=add', '新增用户', 'width=1100, height=900, top=200, left=400');
+    }
+
+    /**
+     * 绑定单条的查看
+     */
+    function seedata(yhid){
+        window.open("add_user.jsp?yhid=" + yhid + "&mode=view", "_blank");
+    }
+
+    /**
+     * 绑定编辑
+     */
+    function editdata(yhid){
+        window.open("add_user.jsp?yhid=" + yhid + "&mode=updateusers", "_blank");
     }
 
 
     /**
-     * 将全局数组内容显示在表格中的函数
-     * @param list
+     * 绑定并确认删除
      */
-    function displayListInTable(list) {
-        // 清空表格的tbody
-        $("#usertable tbody").empty();
-        let j = 0 ;
-
-        // 遍历全局数组并构建表格行
-        for (let i = 0; i < list.length; i++) {
-            j= j + 1;
-            var rowData = list[i];
-            var rowHtml = "<tr><td class=centered>" + j + "</td><td style='max-width: 100px; overflow:hidden;text-overflow: ellipsis;' >" + rowData.yhxm + "</td><td>"
-                + rowData.yhid + "</td><td class=centered>"
-                + rowData.yhbm + "</td><td class=centered>"
-                + rowData.yhxb + "</td><td class=centered>"
-                + rowData.pxh + "</td><td class=centered>"
-                + rowData.sfjy + "</td>"+"<td>" +
-                "<button class='btn-query' data-index='" + i + "' style='margin-left: 20px' >查看</button>" +
-                "<button class='btn-edit' data-index='" + i + "' style='margin-left: 20px'>修改</button>" +
-                "<button class='btn-delete' data-index='" + i + "' style='margin-left: 20px'>删除</button>" +
-                "</td></tr>";
-            // 将行添加到表格的tbody中
-            $("#usertable tbody").append(rowHtml);
+    function deletedata(yhid){
+        //TODO 删除用户id直接获取(完成)
+        // 编写删除操作的逻辑，可以弹出确认框等
+        if (confirm("确认删除？")) {
+            // 在确认删除后，使用 AJAX 请求执行删除操作
+            $.ajax({
+                url: "delete_user",
+                method: "POST",
+                data: { yhid: yhid },
+                success: function() {
+                    alert("删除成功！");
+                    location.reload();
+                },
+                error: function() {
+                    alert("删除失败，请重试！");
+                }
+            });
         }
-
-
-        /**
-         * 绑定单条的查看
-         */
-        $(".btn-query").click(function() {
-            let index = $(this).data("index");
-            let user = null;
-            $.ajax({
-                url: "selectbyid",
-                method: "POST",
-                data: { yhid: list[index].yhid},
-                success: function(response) {
-                    var rdata =JSON.parse(response);
-                    if(rdata.code == 1){
-                        // alert(rdata.msg);
-                        user = rdata.object;
-                        console.log(user);
-                        // alert("查看成功！");
-                        let jsonData  = JSON.stringify(user);
-                        console.log("jsondata:",jsonData);
-                        window.open("add_user.jsp?jsonData=" + encodeURIComponent(jsonData)+ "&mode=view", "_blank");
-                    }else{
-                        alert(rdata.msg);
-                    }
-                },
-                error: function() {
-                    alert("查看失败，服务器开小差了！");
-                }
-            });
-        });
-        /**
-         * 绑定编辑
-         */
-        $(".btn-edit").click(function() {
-            let index = $(this).data("index");
-            let user = null;
-            $.ajax({
-                url: "selectbyid",
-                method: "POST",
-                data: { yhid: list[index].yhid},
-                success: function(response) {
-                    var rdata =JSON.parse(response);
-                    if(rdata.code == 1){
-                        user = rdata.object;
-                        var updateData = JSON.stringify(user);
-                        window.open("add_user.jsp?jsonData=" + encodeURIComponent(updateData)+ "&mode=updateusers", "_blank");
-
-                    }else{
-                        alert(rdata.msg);
-                    }
-                },
-                error: function() {
-                    alert("查看失败，服务器开小差了！");
-                }
-            });
-            doQuery();
-
-
-        });
-        /**
-         * 绑定并确认删除
-         */
-        $(".btn-delete").click(function() {
-            var index = $(this).data("index");
-            // 编写删除操作的逻辑，可以弹出确认框等
-            if (confirm("确认删除？")) {
-                let userId = list[index].yhid;
-                // 在确认删除后，使用 AJAX 请求执行删除操作
-                $.ajax({
-                    url: "delete_user",
-                    method: "POST",
-                    data: { yhid: userId },
-                    success: function() {
-                        // 删除成功后，从 list 中移除对应项
-                        list.splice(index, 1);
-                        alert("删除成功！");
-                        location.reload();
-                    },
-                    error: function() {
-                        alert("删除失败，请重试！");
-                    }
-                });
-            }
-        });
     }
 
-
-    /**
-     * 页面函数
-     */
-    $(document).ready(function() {
-        doQuery();
-
-    });
     /**
      *  模拟编码方法
      * @param str
@@ -345,6 +237,10 @@
     function encodeStr(str) {
         return encodeURIComponent(str);
     }
+
+    /**
+     * 刷新父页面
+     */
     function refreshParent() {
         location.reload();
     }
@@ -366,7 +262,43 @@
                 alert("注销失败，请重试！");
             }
         });
-}
+    }
+
+    /**
+     * 将全局数组内容显示在表格中的函数
+     * @param list
+     */
+    function displayListInTable(list) {
+        // 清空表格的tbody
+        $("#usertable tbody").empty();
+        let j = 0;
+        // 遍历全局数组并构建表格行
+        for (let i = 0; i < list.length; i++) {
+            j = j + 1;
+            var rowData = list[i];
+            var rowHtml = "<tr><td class=centered>" + j + "</td><td style='max-width: 100px; overflow:hidden;text-overflow: ellipsis;' >" + rowData.yhxm + "</td><td>"
+                + rowData.yhid + "</td><td class=centered>"
+                + rowData.yhbm + "</td><td class=centered>"
+                + rowData.yhxb + "</td><td class=centered>"
+                + rowData.pxh + "</td><td class=centered>"
+                + rowData.sfjy + "</td>" + "<td>" +
+                "<input type='button' id='btn-query' onclick='seedata("+'\"' + rowData.yhid +'\"'+")' data-index='" + i + "' style='margin-left: 20px' value='查看'>" +
+                "<input type='button' id='btn-edit' onclick='editdata("+'\"' + rowData.yhid +'\"'+")'  data-index='" + i + "' style='margin-left: 20px' value='修改'>" +
+                "<input type='button' id='btn-delete' onclick='deletedata("+'\"' + rowData.yhid +'\"'+")'  data-index='" + i + "' style='margin-left: 20px' value='删除'>" +
+                "</td></tr>";
+            // 将行添加到表格的tbody中
+            $("#usertable tbody").append(rowHtml);
+        }
+    }
+
+
+    /**
+     * 页面函数
+     */
+    $(document).ready(function() {
+        doQuery();
+    });
+
 
 
 

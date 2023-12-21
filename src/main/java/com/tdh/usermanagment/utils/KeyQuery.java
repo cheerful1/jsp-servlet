@@ -15,6 +15,7 @@ public class KeyQuery {
      * @return 如果当前map含有该key(departmentcode),返回该key对应的值。如果没有就返回null。
      */
     public static String keyLookup(String departmentcode, Map<String,Object> map){
+        // TODO 判空
         if(map.containsKey(departmentcode)){
             return (String) map.get(departmentcode);
         }else{

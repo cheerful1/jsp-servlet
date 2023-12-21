@@ -2,9 +2,8 @@ package com.tdh.usermanagment.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tdh.usermanagment.entity.vo.MessageModel;
-import com.tdh.usermanagment.service.Selectbyidservice;
+import com.tdh.usermanagment.service.UserService;
 
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -18,11 +17,11 @@ import java.io.IOException;
 @WebServlet("/selectbyid")
 //编写一个类去继承HttpServlet类
 public class SelectByIdServlet extends HttpServlet {
-    private Selectbyidservice selectbyidservice = new Selectbyidservice();
+    private UserService userService = new UserService();
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) {
         doPost(request,response);
     }
     /**
@@ -40,7 +39,7 @@ public class SelectByIdServlet extends HttpServlet {
             String yhid = request.getParameter("yhid");
 
             //2.调用service层的方法返回消息对象
-            MessageModel messageModel = selectbyidservice.Selectbyid(yhid);
+            MessageModel messageModel = userService.Selectbyid(yhid);
 
             //java对象转化成json，封装到request中返回到前端
             String requestString = objectMapper.writeValueAsString(messageModel);
@@ -55,5 +54,4 @@ public class SelectByIdServlet extends HttpServlet {
             e.printStackTrace();
         }
     }
-
 }

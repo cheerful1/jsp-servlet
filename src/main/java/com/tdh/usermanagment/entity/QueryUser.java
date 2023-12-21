@@ -1,9 +1,5 @@
 package com.tdh.usermanagment.entity;
 
-/**
- * @author : wangshanjie
- * @date : 14:50 2023/12/18
- */
 
 /**
  * 作为查询得到的javabean
