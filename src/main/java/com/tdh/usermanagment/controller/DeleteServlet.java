@@ -1,9 +1,6 @@
 package com.tdh.usermanagment.controller;
 
-
 import com.tdh.usermanagment.Dao.UserDao;
-
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;

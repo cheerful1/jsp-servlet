@@ -25,10 +25,4 @@ public class RandomStringGenerator {
         }
         return randomString.toString();
     }
-
-//    public static void main(String[] args) {
-//        // 生成随机字符串并输出
-//        String randomStr = generateRandomString();
-//        System.out.println(randomStr);
-//    }
 }

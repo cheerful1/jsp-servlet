@@ -1,15 +1,9 @@
 package com.tdh.usermanagment.Dao;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tdh.usermanagment.cache.TDepartCache;
 import com.tdh.usermanagment.entity.TdhUser;
 import com.tdh.usermanagment.jdbc.DBConnection;
-import com.tdh.usermanagment.utils.KeyQuery;
-
 import java.sql.*;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -253,11 +247,51 @@ public class UserDao {
 
 
 
+    /**
+     * 查询用户的信息(登录验证用户)
+     * @param yhid String类 登录用户yhid
+     * @param yhkl String类  登录用户密码yhkl
+     * @return 根据用户id查询数据，返回查询到user信息。
+     */
+    public TdhUser login_queryuser(String yhid,String yhkl) {
+        //执行增删改查的语句
+        //1、连接数据库
+        Connection conn = null;
+        PreparedStatement ps =null;
+        ResultSet rs =null;
+        // 预编译sql执行语句
+        String sql = "select YHXM,YHKL,YHXB,YHBM,CSRQ,DJSJ,DJRQ,SFJY,PXH from my_db.t_user where YHID=? and YHKL=?";
+        try {
+            conn = DBConnection.getConn();
+            ps = conn.prepareStatement(sql);
+            ps.setString(1,yhid);
+            ps.setString(2,yhkl);
+            //执行操作更改！括号中的sql不要传
+            rs = ps.executeQuery();
+            //创建一个用户对象返回
+            while (rs.next()){
+                TdhUser tUser = new TdhUser();
+                tUser.setYHID(yhid);
+                tUser.setYHXM(rs.getString("YHXM"));
+                tUser.setYHKL(rs.getString("YHKL"));
+                tUser.setYHXB(rs.getString("YHXB"));
+                tUser.setYHBM(rs.getString("YHBM"));
+                tUser.setCSRQ(rs.getString("CSRQ"));
+                tUser.setDJSJ(rs.getString("DJSJ"));
+                tUser.setDJRQ(rs.getString("DJRQ"));
+                tUser.setSFJY(rs.getString("SFJY"));
+                tUser.setPXH(rs.getInt("PXH"));
+                return tUser;
+            }
 
-
-
-
-
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            DBConnection.close(rs, ps, conn);
+        }
+        //如果没有获取到就返回为空
+        return null;
+    }
 
     /**
      * 根据用户姓名或者用户ID 、 用户部门筛选用户

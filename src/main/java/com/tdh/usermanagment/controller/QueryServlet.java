@@ -4,8 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tdh.usermanagment.entity.QueryUser;
 import com.tdh.usermanagment.entity.vo.MessageModel;
 import com.tdh.usermanagment.service.UserService;
-
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;

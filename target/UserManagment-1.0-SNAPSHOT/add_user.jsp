@@ -175,7 +175,6 @@
     function doSave(){
 
         var params = $("#userForm").serialize();
-        console.log(params);
 
 
         /**
